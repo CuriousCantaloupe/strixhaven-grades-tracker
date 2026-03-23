@@ -52,8 +52,10 @@ class StrixhavenGradeEditor extends FormApplication {
     }
 
     async _updateObject(event, formData) {
+        // expandObject stellt sicher, dass wir ein sauberes JS-Objekt erhalten (V12 kompatibel)
+        const data = expandObject(formData);
         const grades = {};
-        for (let [key, value] of Object.entries(formData)) {
+        for (let [key, value] of Object.entries(data)) {
             if (value !== "" && value !== null) {
                 grades[key] = Number(value);
             }
@@ -127,6 +129,8 @@ class StrixhavenGradesTracker extends Application {
   }
 
   activateListeners(html) {
+    // WICHTIG: html explizit in jQuery umwandeln für V12/V13
+    html = $(html);
     super.activateListeners(html);
 
     html.find(".course-filter").change(ev => {
@@ -137,12 +141,13 @@ class StrixhavenGradesTracker extends Application {
     html.find(".edit-student").click(async (ev) => {
       const actorId = $(ev.currentTarget).data("actor-id");
       const actor = game.actors.get(actorId);
-      new StrixhavenGradeEditor(actor).render(true);
+      if (actor) new StrixhavenGradeEditor(actor).render(true);
     });
 
     html.find(".delete-student").click(async (ev) => {
       const actorId = $(ev.currentTarget).data("actor-id");
       const actor = game.actors.get(actorId);
+      if (!actor) return;
 
       const confirm = await Dialog.confirm({
         title: "Student entfernen",
@@ -163,14 +168,27 @@ class StrixhavenGradesTracker extends Application {
     const data = JSON.parse(event.dataTransfer.getData('text/plain'));
     if (data.type !== "Actor") return;
     const actor = await Actor.fromDropData(data);
-    await actor.setFlag("strixhaven-grades-tracker", "isStudent", true);
-    this.render(true);
+    if (actor) {
+        await actor.setFlag("strixhaven-grades-tracker", "isStudent", true);
+        this.render(true);
+    }
   }
 }
 
-// Button in der Sidebar hinzufügen
+/**
+ * Sidebar Button Injektion
+ */
 Hooks.on("renderJournalDirectory", (app, html, data) => {
+  const $html = $(html);
+  
+  // Prüfen, ob der Button schon existiert (verhindert Dopplungen beim Neurendern)
+  if ($html.find(".strixhaven-btn").length > 0) return;
+
   const button = $(`<button class="strixhaven-btn"><i class="fas fa-scroll"></i> Strixhaven Ranking</button>`);
-  button.click(() => new StrixhavenGradesTracker().render(true));
-  html.find(".header-actions").append(button);
+  
+  button.click(() => {
+    new StrixhavenGradesTracker().render(true);
+  });
+
+  $html.find(".header-actions").append(button);
 });

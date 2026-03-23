@@ -111,7 +111,9 @@ button.strixhaven-btn {
     background: #4a0404 !important;
     color: #f4e4bc !important;
     border: 1px solid #d4af37 !important;
-    margin: 5px 0;
+    flex: 0;
+    margin: 4px 0;
+    line-height: 24px;
     font-family: 'Crimson Text', serif;
     font-weight: bold;
 }
