@@ -1,8 +1,11 @@
 {
   "id": "strixhaven-grades-tracker",
-  "title": "Strixhaven Notenübersicht",
-  "description": "Ein Tracker für die besten Studierenden mit 5 Kurs-Kategorien.",
+  "title": "Strixhaven: Akademisches Bulletin",
+  "description": "Ein dynamisches Ranking-Board für Studierende mit Kurs-Filtern und Noten-Editor.",
   "version": "0.1.0",
+  "library": "false",
+  "manifest": "",
+  "download": "",
   "authors": [
     {
       "name": "CuriousCantaloupe",
@@ -10,8 +13,8 @@
     }
   ],
   "compatibility": {
-    "minimum": "13",
-    "verified": "13"
+    "minimum": "11",
+    "verified": "12"
   },
   "esmodules": ["scripts/main.js"],
   "styles": ["styles/style.css"],

@@ -1,0 +1,49 @@
+<div class="strixhaven-board-container">
+    <header class="board-header">
+        <h1><i class="fas fa-university"></i> Strixhaven Excellence</h1>
+        
+        <div class="filter-area">
+            <label for="course-select">Ansicht:</label>
+            <select class="course-filter" id="course-select">
+                <option value="all" {{#if isGlobal}}selected{{/if}}>Gesamtrangliste (Alle Kurse)</option>
+                {{#each allCourses}}
+                <option value="{{this}}" {{#if (eq ../currentFilter this)}}selected{{/if}}>Kurs: {{this}}</option>
+                {{/each}}
+            </select>
+        </div>
+    </header>
+
+    <hr>
+
+    <div class="ranking-list">
+        {{#each students}}
+        <div class="student-row {{#if this.isGM}}is-gm{{/if}}">
+            <div class="rank">#{{add @index 1}}</div>
+            <img src="{{this.img}}" class="student-img" title="{{this.name}}">
+            <div class="student-info">
+                <span class="name">{{this.name}}</span>
+                <span class="score">
+                    <strong>{{this.score}}</strong> 
+                    {{#if ../isGlobal}}Gesamtpunkte{{else}}Punkte in {{../currentFilter}}{{/if}}
+                </span>
+            </div>
+            
+            {{#if this.isGM}}
+            <div class="admin-controls">
+                <a class="edit-student" data-actor-id="{{this.id}}" title="Noten bearbeiten">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a class="delete-student" data-actor-id="{{this.id}}" title="Vom Brett entfernen">
+                    <i class="fas fa-trash"></i>
+                </a>
+            </div>
+            {{/if}}
+        </div>
+        {{else}}
+        <div class="empty-msg">
+            <p>Keine Studierenden gefunden.</p>
+            <p><small>Ziehe einen Charakter aus der Sidebar hierher, um ihn einzuschreiben.</small></p>
+        </div>
+        {{/each}}
+    </div>
+</div>

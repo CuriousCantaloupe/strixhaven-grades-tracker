@@ -1,0 +1,122 @@
+/* Schriftart von Google laden */
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400&display=swap');
+
+/* Hauptfenster-Isolierung */
+.app.strixhaven-board {
+    background: #f4e4bc !important; 
+    border: 2px solid #8b4513 !important;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+/* Titelleiste oben */
+.strixhaven-board .window-header {
+    background: #4a0404;
+    color: #d4af37;
+    border-bottom: 2px solid #d4af37;
+}
+
+.strixhaven-board .window-header a {
+    color: #d4af37; /* Schließen-Button Farbe */
+}
+
+/* Container-Styling */
+.strixhaven-board .strixhaven-board-container {
+    padding: 15px;
+    color: #2c3e50;
+    font-family: 'Crimson Text', serif;
+    overflow-y: auto;
+}
+
+/* Die Liste der Studierenden */
+.strixhaven-board .ranking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.strixhaven-board .student-row {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(139, 69, 19, 0.2);
+    border-radius: 5px;
+}
+
+.strixhaven-board .student-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #4a0404;
+    margin-right: 15px;
+    object-fit: cover;
+}
+
+/* Info-Bereich (Name & Score) */
+.strixhaven-board .student-info {
+    flex-grow: 1;
+}
+
+.strixhaven-board .student-info .name {
+    display: block;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+/* Admin Controls (Icons) */
+.strixhaven-board .admin-controls {
+    display: flex;
+    gap: 15px;
+    margin-left: 10px;
+    opacity: 0.2;
+    transition: opacity 0.2s ease;
+}
+
+.strixhaven-board .student-row:hover .admin-controls {
+    opacity: 1;
+}
+
+.strixhaven-board .admin-controls a {
+    cursor: pointer;
+    font-size: 1.1em;
+}
+
+.strixhaven-board .edit-student:hover {
+    color: #2a5a2a; /* Dunkelgrün für Edit */
+}
+
+.strixhaven-board .delete-student:hover {
+    color: #a01a1a; /* Dunkelrot für Löschen */
+}
+
+/* Formular-Elemente & Editor */
+.strixhaven-board select.course-filter,
+.strixhaven-board .strixhaven-editor-form input {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid #8b4513;
+    color: #4a0404;
+    padding: 2px 5px;
+}
+
+.strixhaven-board .course-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+/* Sidebar Button */
+button.strixhaven-btn {
+    background: #4a0404 !important;
+    color: #f4e4bc !important;
+    border: 1px solid #d4af37 !important;
+    margin: 5px 0;
+    font-family: 'Crimson Text', serif;
+    font-weight: bold;
+}
+
+button.strixhaven-btn:hover {
+    box-shadow: 0 0 8px #d4af37;
+    filter: brightness(1.2);
+}

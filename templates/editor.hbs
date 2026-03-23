@@ -1,0 +1,26 @@
+<form class="strixhaven-editor-form">
+    <header class="editor-header">
+        <h2>Notenblatt: {{name}}</h2>
+        <p>Trage hier die Punkte für die jeweiligen Kurse ein. Felder leer lassen, wenn der Kurs nicht belegt wird.</p>
+    </header>
+
+    <section class="course-grid">
+        {{#each courses}}
+        <div class="form-group-inline">
+            <label>{{this.name}}</label>
+            <input type="number" 
+                   name="{{this.name}}" 
+                   value="{{this.value}}" 
+                   placeholder="0" 
+                   step="1" 
+                   min="0">
+        </div>
+        {{/each}}
+    </section>
+
+    <footer class="sheet-footer">
+        <button type="submit" name="submit">
+            <i class="fas fa-save"></i> Änderungen speichern
+        </button>
+    </footer>
+</form>
