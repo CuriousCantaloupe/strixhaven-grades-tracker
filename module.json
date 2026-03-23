@@ -1,6 +1,6 @@
 {
-  "id": "uni-rangliste",
-  "title": "Schwarzes Brett: Uni-Rangliste",
+  "id": "strixhaven-grades-tracker",
+  "title": "Strixhaven Notenübersicht",
   "description": "Ein Tracker für die besten Studierenden mit 5 Kurs-Kategorien.",
   "version": "0.1.0",
   "authors": [
