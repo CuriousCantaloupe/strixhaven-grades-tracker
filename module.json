@@ -4,8 +4,8 @@
   "description": "Ein dynamisches Ranking-Board für Studierende mit Kurs-Filtern und Noten-Editor.",
   "version": "0.1.0",
   "library": "false",
-  "manifest": "",
-  "download": "",
+  "manifest": "https://raw.githubusercontent.com/CuriousCantaloupe/strixhaven-grades-tracker/refs/heads/main/module.json?token=GHSAT0AAAAAADYSLOPMHZR4MOMJS4SJ5PFQ2OBYQOA",
+  "download": "https://github.com/CuriousCantaloupe/strixhaven-grades-tracker/releases/tag/0.1.0",
   "authors": [
     {
       "name": "CuriousCantaloupe",
