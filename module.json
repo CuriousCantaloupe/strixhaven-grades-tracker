@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "library": "false",
   "manifest": "https://raw.githubusercontent.com/CuriousCantaloupe/strixhaven-grades-tracker/main/module.json",
-  "download": "https://github.com/CuriousCantaloupe/strixhaven-grades-tracker/releases/tag/download/v0.1.0/strixhaven-grades-tracker.zip",
+  "download": "https://github.com/CuriousCantaloupe/strixhaven-grades-tracker/releases/download/latest/strixhaven-grades-tracker.zip",
   "authors": [
     {
       "name": "CuriousCantaloupe",
@@ -13,8 +13,8 @@
     }
   ],
   "compatibility": {
-    "minimum": "11",
-    "verified": "12"
+    "minimum": "13",
+    "verified": "13"
   },
   "esmodules": ["scripts/main.js"],
   "styles": ["styles/style.css"],
