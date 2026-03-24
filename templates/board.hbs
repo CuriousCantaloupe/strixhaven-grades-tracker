@@ -13,6 +13,24 @@
         </select>
     </div>
 
+    <div class="downtime-tracker">
+    <div class="downtime-info">
+        <span class="downtime-label">Downtime Progress:</span>
+        <span class="downtime-count">{{downtimeCurrent}} / {{downtimeMax}} Cycles</span>
+        {{#if isGM}}
+        <div class="downtime-admin">
+            <a class="downtime-control" data-action="sub" title="Minus 1"><i class="fas fa-minus"></i></a>
+            <a class="downtime-control" data-action="add" title="Plus 1"><i class="fas fa-plus"></i></a>
+            <a class="downtime-control" data-action="set-max" title="Set Max"><i class="fas fa-cog"></i></a>
+            <a class="downtime-control" data-action="reset" title="Reset"><i class="fas fa-sync"></i></a>
+        </div>
+        {{/if}}
+    </div>
+    <div class="downtime-bar-container">
+        <div class="downtime-bar" style="width: {{downtimePercent}}%"></div>
+    </div>
+    </div>
+
     <div class="ranking-list">
         {{#each students}}
         <div class="student-row {{#if this.isGM}}is-gm{{/if}}">
