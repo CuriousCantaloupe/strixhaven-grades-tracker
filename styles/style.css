@@ -1,124 +1,212 @@
-/* Schriftart von Google laden */
+/* STRIXHAVEN GRADES TRACKER - Custom Styles */
+
 @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400&display=swap');
 
 /* Hauptfenster-Isolierung */
-.app.strixhaven-board {
-    background: #f4e4bc !important; 
+#strixhaven-grades-tracker, 
+#strixhaven-grades-editor {
+    background: url('../ui/parchment.jpg') #f4e4bc !important; 
+    background-color: #f4e4bc !important;
     border: 2px solid #8b4513 !important;
     box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    font-family: 'Crimson Text', serif;
 }
 
-/* Titelleiste oben */
-.strixhaven-board .window-header {
+/* Titelleiste oben (Fensterrahmen) */
+#strixhaven-grades-tracker .window-header,
+#strixhaven-grades-editor .window-header {
     background: #4a0404;
     color: #d4af37;
     border-bottom: 2px solid #d4af37;
 }
 
-.strixhaven-board .window-header a {
-    color: #d4af37; /* Schließen-Button Farbe */
+#strixhaven-grades-tracker .window-header a,
+#strixhaven-grades-editor .window-header a {
+    color: #d4af37 !important;
 }
 
 /* Container-Styling */
-.strixhaven-board .strixhaven-board-container {
+.strixhaven-board-container, .strixhaven-editor-form {
     padding: 15px;
     color: #2c3e50;
-    font-family: 'Crimson Text', serif;
     overflow-y: auto;
 }
 
-/* Die Liste der Studierenden */
-.strixhaven-board .ranking-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 15px;
-}
-
-.strixhaven-board .student-row {
+/* --- NEU: Header & Filter Styling --- */
+.strixhaven-board-container h2 {
+    font-family: 'Crimson Text', serif;
+    font-size: 2.5em;
+    border-bottom: 2px solid #8b4513;
+    color: #4a0404;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
     display: flex;
     align-items: center;
-    padding: 10px;
+    gap: 12px;
+}
+
+.strixhaven-board-container .filter-row {
+    font-family: 'Crimson Text', serif;
+    font-size: 1.1em;
+    color: #4b4a44;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.strixhaven-board-container select.course-filter {
     background: rgba(255, 255, 255, 0.4);
+    border: 1px solid #8b4513;
+    border-radius: 3px;
+    font-family: 'Crimson Text', serif;
+    font-size: 1em;
+    padding: 2px 8px;
+    color: #4a0404;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.strixhaven-board-container select.course-filter:hover {
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 5px rgba(139, 69, 19, 0.2);
+}
+
+/* Platzierungs-Bereich (Zahl & Icon) */
+.strixhaven-board-container .rank {
+    font-family: 'Crimson Text', serif;
+    font-size: 1.8em; 
+    font-weight: bold;
+    min-width: 65px; 
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #4b4a44; 
+    text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+    gap: 5px;
+}
+
+.strixhaven-board-container .ranking-icon {
+    display: none;
+    font-size: 0.6em; 
+    vertical-align: middle;
+}
+
+/* Top 3: Icons anzeigen und Farben zuweisen */
+.ranking-list .student-row:nth-child(1) .rank,
+.ranking-list .student-row:nth-child(1) .ranking-icon {
+    color: #d4af37; /* Gold */
+}
+
+.ranking-list .student-row:nth-child(2) .rank,
+.ranking-list .student-row:nth-child(2) .ranking-icon {
+    color: #aaa9ad; /* Silber */
+}
+
+.ranking-list .student-row:nth-child(3) .rank,
+.ranking-list .student-row:nth-child(3) .ranking-icon {
+    color: #b08d57; /* Bronze */
+}
+
+.ranking-list .student-row:nth-child(1) .ranking-icon,
+.ranking-list .student-row:nth-child(2) .ranking-icon,
+.ranking-list .student-row:nth-child(3) .ranking-icon {
+    display: inline-block;
+}
+
+/* Spezial-Effekte für Platz 1 */
+.ranking-list .student-row:nth-child(1) .rank {
+    font-size: 2.2em;
+    filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.5));
+}
+
+.ranking-list .student-row:nth-child(1) {
+    border: 1px solid rgba(212, 175, 55, 0.4) !important;
+    background: rgba(212, 175, 55, 0.1) !important;
+}
+
+.student-row {
+    display: flex !important;
+    align-items: center !important;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.3);
     border: 1px solid rgba(139, 69, 19, 0.2);
     border-radius: 5px;
+    transition: background 0.2s;
+    margin-bottom: 5px;
 }
 
-.strixhaven-board .student-img {
-    width: 50px;
-    height: 50px;
+.student-row:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.student-row img.student-img {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
     border-radius: 50%;
     border: 2px solid #4a0404;
-    margin-right: 15px;
-    object-fit: cover;
+    margin-right: 15px !important;
+    object-fit: cover !important;
 }
 
-/* Info-Bereich (Name & Score) */
-.strixhaven-board .student-info {
-    flex-grow: 1;
+.student-info {
+    display: flex;
+    flex-direction: column;
 }
 
-.strixhaven-board .student-info .name {
-    display: block;
+.student-info .name {
     font-weight: bold;
     font-size: 1.2em;
+    color: #4a0404;
 }
 
-/* Admin Controls (Icons) */
-.strixhaven-board .admin-controls {
+.student-info .score {
+    font-size: 0.9em;
+    font-style: italic;
+}
+
+.admin-controls {
+    margin-left: auto !important; 
     display: flex;
     gap: 15px;
-    margin-left: 10px;
-    opacity: 0.2;
+    padding-left: 20px;
+    opacity: 0.3;
     transition: opacity 0.2s ease;
 }
 
-.strixhaven-board .student-row:hover .admin-controls {
+.student-row:hover .admin-controls {
     opacity: 1;
 }
 
-.strixhaven-board .admin-controls a {
+.admin-controls a {
     cursor: pointer;
     font-size: 1.1em;
-}
-
-.strixhaven-board .edit-student:hover {
-    color: #2a5a2a; /* Dunkelgrün für Edit */
-}
-
-.strixhaven-board .delete-student:hover {
-    color: #a01a1a; /* Dunkelrot für Löschen */
-}
-
-/* Formular-Elemente & Editor */
-.strixhaven-board select.course-filter,
-.strixhaven-board .strixhaven-editor-form input {
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid #8b4513;
     color: #4a0404;
-    padding: 2px 5px;
 }
 
-.strixhaven-board .course-grid {
+.admin-controls .edit-student:hover { color: #2a5a2a; }
+.admin-controls .delete-student:hover { color: #a01a1a; }
+
+/* Editor Formular */
+.course-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
-    padding: 10px 0;
+    padding: 15px 0;
 }
 
-/* Sidebar Button */
-button.strixhaven-btn {
-    background: #4a0404 !important;
-    color: #f4e4bc !important;
-    border: 1px solid #d4af37 !important;
-    flex: 0;
-    margin: 4px 0;
-    line-height: 24px;
-    font-family: 'Crimson Text', serif;
-    font-weight: bold;
+.form-group-inline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0,0,0,0.05);
+    padding: 8px;
+    border-radius: 3px;
 }
 
-button.strixhaven-btn:hover {
-    box-shadow: 0 0 8px #d4af37;
-    filter: brightness(1.2);
+input[type="number"] {
+    width: 60px;
+    text-align: center;
 }

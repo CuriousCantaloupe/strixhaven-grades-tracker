@@ -1,194 +1,198 @@
 /**
- * STRIXHAVEN GRADES TRACKER
+ * STRIXHAVEN GRADES TRACKER - Finale Version mit Checkbox-Logik & Filter
  */
 
-Hooks.once("init", () => {
-    // Handlebars Helper registrieren
-    Handlebars.registerHelper('eq', (a, b) => a === b);
-    Handlebars.registerHelper('add', (a, b) => a + b);
-
-    // Modul-Einstellungen registrieren
-    game.settings.register("strixhaven-grades-tracker", "courseList", {
-        name: "Verfügbare Kurse",
-        hint: "Gib die Kürzel der Kurse kommagetrennt ein.",
-        scope: "world",
-        config: true,
-        type: String,
-        default: "GF1, GF2, ALC1, ALC2, MAG1, MAG2, HIS1, DRA1, MAT1, RUN1, BOT1, ILL1, SUM1, NEC1",
-    });
-});
-
-/**
- * Editor für die Noten eines einzelnen Studenten
- */
-class StrixhavenGradeEditor extends FormApplication {
-    constructor(actor, opts = {}) {
-        super(actor, opts);
-        this.actor = actor;
+// --- 1. Die Editor-Klasse (Das Notenblatt) ---
+class StrixhavenGradesEditor extends Application {
+    constructor(actorId, options = {}) {
+        super(options);
+        this.actorId = actorId;
     }
 
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
-            id: "strixhaven-grade-editor",
-            title: "Noten eintragen",
+        return foundry.utils.mergeObject(super.defaultOptions, {
+            id: "strixhaven-grades-editor",
+            title: "Notenblatt bearbeiten",
             template: "modules/strixhaven-grades-tracker/templates/editor.hbs",
-            width: 400,
-            closeOnSubmit: true
+            width: 450,
+            height: "auto",
+            resizable: true
         });
     }
 
-    getData() {
-        const settingsString = game.settings.get("strixhaven-grades-tracker", "courseList");
-        const allCourses = settingsString.split(",").map(c => c.trim());
-        const currentGrades = this.actor.getFlag("strixhaven-grades-tracker", "grades") || {};
+    async getData() {
+        const studentData = game.settings.get("strixhaven-grades-tracker", "studentData") || {};
+        const courseString = game.settings.get("strixhaven-grades-tracker", "courseList") || "";
+        const allCourses = courseString.split(",").map(c => c.trim()).filter(c => c !== "");
+        const student = studentData[this.actorId];
+
+        // Bereitet die Daten für den {{#each courses}} Loop vor
+        const coursesForTemplate = allCourses.map(c => ({
+            name: c,
+            value: student.grades?.[c] || 0,
+            isEnrolled: student.grades ? student.grades.hasOwnProperty(c) : false
+        }));
 
         return {
-            name: this.actor.name,
-            courses: allCourses.map(c => ({
-                name: c,
-                value: currentGrades[c] !== undefined ? currentGrades[c] : ""
-            }))
+            name: student.name,
+            courses: coursesForTemplate
         };
     }
 
-    async _updateObject(event, formData) {
-        // expandObject stellt sicher, dass wir ein sauberes JS-Objekt erhalten (V12 kompatibel)
-        const data = expandObject(formData);
-        const grades = {};
-        for (let [key, value] of Object.entries(data)) {
-            if (value !== "" && value !== null) {
-                grades[key] = Number(value);
+    activateListeners(html) {
+        super.activateListeners(html);
+        // Da das Formular die Klasse .strixhaven-editor-form nutzt:
+        html.on("submit", (e) => this._onSave(e));
+    }
+
+    async _onSave(event) {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const newGrades = {};
+
+        const courseString = game.settings.get("strixhaven-grades-tracker", "courseList") || "";
+        const allCourses = courseString.split(",").map(c => c.trim()).filter(c => c !== "");
+
+        allCourses.forEach(c => {
+            // Holt die Checkbox und den Wert basierend auf dem Namen im Template
+            const isEnrolled = form.querySelector(`[name="enroll.${c}"]`)?.checked;
+            const gradeValue = form.querySelector(`[name="grade.${c}"]`)?.value;
+
+            if (isEnrolled) {
+                newGrades[c] = parseInt(gradeValue) || 0;
             }
+        });
+
+        let students = game.settings.get("strixhaven-grades-tracker", "studentData");
+        if (students[this.actorId]) {
+            students[this.actorId].grades = newGrades;
+            await game.settings.set("strixhaven-grades-tracker", "studentData", students);
+            
+            // UI aktualisieren
+            strixTool.application.render();
+            this.close();
         }
-        await this.actor.setFlag("strixhaven-grades-tracker", "grades", grades);
-        
-        // Alle offenen Instanzen des Trackers aktualisieren
-        Object.values(ui.windows).forEach(w => {
-            if (w.constructor.name === "StrixhavenGradesTracker") w.render(true);
+    }
+}
+
+// --- 2. Die Haupt-Klasse (Das Bulletin) ---
+class StrixhavenGradesTracker extends Application {
+    constructor(options = {}) {
+        super(options);
+        this.currentFilter = "all";
+    }
+
+    static get defaultOptions() {
+        return foundry.utils.mergeObject(super.defaultOptions, {
+            id: "strixhaven-grades-tracker",
+            template: "modules/strixhaven-grades-tracker/templates/board.hbs",
+            width: 700,
+            height: "auto",
+            resizable: true,
+            dragDrop: [{ dragSelector: null, dropSelector: ".strixhaven-board-container" }]
         });
     }
-}
 
-/**
- * Die Haupt-Applikation (Das Ranking Board)
- */
-class StrixhavenGradesTracker extends Application {
-  constructor(options = {}) {
-    super(options);
-    this.currentFilter = "all";
-  }
+    async getData() {
+        const studentData = game.settings.get("strixhaven-grades-tracker", "studentData") || {};
+        const courseString = game.settings.get("strixhaven-grades-tracker", "courseList") || "";
+        const allCourses = courseString.split(",").map(c => c.trim()).filter(c => c !== "");
 
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      id: "strixhaven-grades-tracker",
-      title: "Strixhaven: Akademisches Bulletin",
-      template: "modules/strixhaven-grades-tracker/templates/board.hbs",
-      width: 600,
-      height: 750,
-      resizable: true,
-      classes: ["strixhaven-board"],
-      dragDrop: [{ dropSelector: ".strixhaven-board-container" }] 
-    });
-  }
+        // 1. Daten aufbereiten und Score berechnen
+        let students = Object.values(studentData).map(s => {
+            let score = 0;
+            if (this.currentFilter === "all") {
+                score = Object.values(s.grades || {}).reduce((a, b) => a + (parseInt(b) || 0), 0);
+            } else {
+                score = parseInt(s.grades?.[this.currentFilter]) || 0;
+            }
+            return { ...s, score: score, isGM: game.user.isGM };
+        });
 
-  async getData() {
-    const settingsString = game.settings.get("strixhaven-grades-tracker", "courseList");
-    const allCourses = settingsString.split(",").map(c => c.trim());
-    
-    let students = game.actors.contents
-      .filter(a => a.getFlag("strixhaven-grades-tracker", "isStudent"))
-      .map(student => {
-        const grades = student.getFlag("strixhaven-grades-tracker", "grades") || {};
-        let displayScore = 0;
-        let isParticipant = true;
-
-        if (this.currentFilter === "all") {
-          displayScore = Object.values(grades).reduce((a, b) => a + b, 0);
-        } else {
-          if (grades[this.currentFilter] !== undefined) {
-            displayScore = grades[this.currentFilter];
-          } else {
-            isParticipant = false;
-          }
+        // 2. Filtern: Nur Teilnehmer des Kurses anzeigen (wenn nicht "Alle")
+        if (this.currentFilter !== "all") {
+            students = students.filter(s => s.grades && s.grades.hasOwnProperty(this.currentFilter));
         }
 
+        // 3. Sortieren
+        students.sort((a, b) => b.score - a.score);
+
         return {
-          id: student.id,
-          name: student.name,
-          img: student.img,
-          score: displayScore,
-          active: isParticipant,
-          isGM: game.user.isGM
+            students: students,
+            allCourses: allCourses,
+            currentFilter: this.currentFilter,
+            isGlobal: this.currentFilter === "all",
+            isGM: game.user.isGM
         };
-      })
-      .filter(s => s.active);
-
-    students.sort((a, b) => b.score - a.score);
-
-    return { students, allCourses, currentFilter: this.currentFilter, isGlobal: this.currentFilter === "all" };
-  }
-
-  activateListeners(html) {
-    // WICHTIG: html explizit in jQuery umwandeln für V12/V13
-    html = $(html);
-    super.activateListeners(html);
-
-    html.find(".course-filter").change(ev => {
-      this.currentFilter = ev.target.value;
-      this.render(true);
-    });
-
-    html.find(".edit-student").click(async (ev) => {
-      const actorId = $(ev.currentTarget).data("actor-id");
-      const actor = game.actors.get(actorId);
-      if (actor) new StrixhavenGradeEditor(actor).render(true);
-    });
-
-    html.find(".delete-student").click(async (ev) => {
-      const actorId = $(ev.currentTarget).data("actor-id");
-      const actor = game.actors.get(actorId);
-      if (!actor) return;
-
-      const confirm = await Dialog.confirm({
-        title: "Student entfernen",
-        content: `<p>Möchtest du <strong>${actor.name}</strong> wirklich von der Rangliste entfernen?</p>`,
-        yes: () => true,
-        no: () => false,
-        defaultYes: false
-      });
-
-      if (confirm) {
-        await actor.setFlag("strixhaven-grades-tracker", "isStudent", false);
-        this.render(true);
-      }
-    });
-  }
-
-  async _onDrop(event) {
-    const data = JSON.parse(event.dataTransfer.getData('text/plain'));
-    if (data.type !== "Actor") return;
-    const actor = await Actor.fromDropData(data);
-    if (actor) {
-        await actor.setFlag("strixhaven-grades-tracker", "isStudent", true);
-        this.render(true);
     }
-  }
+
+    activateListeners(html) {
+        super.activateListeners(html);
+        html.find(".delete-student").click(this._onDeleteStudent.bind(this));
+        html.find(".edit-student").click(this._onEditStudent.bind(this));
+        html.find(".course-filter").change(this._onFilterChange.bind(this));
+    }
+
+    _onFilterChange(event) {
+        this.currentFilter = event.target.value;
+        this.render();
+    }
+
+    async _onDrop(event) {
+        if (!game.user.isGM) return;
+        let data;
+        try { data = JSON.parse(event.dataTransfer.getData('text/plain')); } catch (err) { return; }
+        if (data.type !== "Actor") return;
+        const actor = await Actor.fromDropData(data);
+        if (!actor) return;
+
+        let students = game.settings.get("strixhaven-grades-tracker", "studentData");
+        if (!students[actor.id]) {
+            students[actor.id] = { id: actor.id, name: actor.name, img: actor.img, grades: {} };
+            await game.settings.set("strixhaven-grades-tracker", "studentData", students);
+            this.render();
+        }
+    }
+
+    _onEditStudent(event) {
+        const actorId = event.currentTarget.dataset.actorId;
+        new StrixhavenGradesEditor(actorId).render(true);
+    }
+
+    async _onDeleteStudent(event) {
+        const actorId = event.currentTarget.dataset.actorId;
+        let students = game.settings.get("strixhaven-grades-tracker", "studentData");
+        delete students[actorId];
+        await game.settings.set("strixhaven-grades-tracker", "studentData", students);
+        this.render();
+    }
 }
 
-/**
- * Sidebar Button Injektion
- */
-Hooks.on("renderJournalDirectory", (app, html, data) => {
-  const $html = $(html);
-  
-  // Prüfen, ob der Button schon existiert (verhindert Dopplungen beim Neurendern)
-  if ($html.find(".strixhaven-btn").length > 0) return;
+// --- 3. Initialisierung ---
+const strixTool = {
+    application: new StrixhavenGradesTracker(),
+    onGetSceneControlButtons(controls) {
+        const tokenTools = controls.tokens?.tools;
+        if (!tokenTools) return;
+        tokenTools.strixhavenGrades = {
+            button: true, icon: "fas fa-graduation-cap", name: "strixhavenGrades",
+            title: "Strixhaven Bulletin", visible: true,
+            onChange: () => {
+                if (strixTool.application.rendered) strixTool.application.close();
+                else strixTool.application.render(true);
+            },
+        };
+    }
+};
 
-  const button = $(`<button class="strixhaven-btn"><i class="fas fa-scroll"></i> Strixhaven Ranking</button>`);
-  
-  button.click(() => {
-    new StrixhavenGradesTracker().render(true);
-  });
-
-  $html.find(".header-actions").append(button);
+Hooks.once("init", () => {
+    game.settings.register("strixhaven-grades-tracker", "courseList", {
+        scope: "world", config: true, type: String, 
+        default: "GF1, GF2, ALC1, ALC2, MAG1, MAG2, HIS1, DRA1, MAT1, RUN1, BOT1, ILL1, SUM1, NEC1"
+    });
+    game.settings.register("strixhaven-grades-tracker", "studentData", {
+        scope: "world", config: false, type: Object, default: {}
+    });
 });
+
+Hooks.on("getSceneControlButtons", (controls) => strixTool.onGetSceneControlButtons(controls));

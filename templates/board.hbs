@@ -1,25 +1,29 @@
 <div class="strixhaven-board-container">
-    <header class="board-header">
-        <h1><i class="fas fa-university"></i> Strixhaven Excellence</h1>
-        
-        <div class="filter-area">
-            <label for="course-select">Ansicht:</label>
-            <select class="course-filter" id="course-select">
-                <option value="all" {{#if isGlobal}}selected{{/if}}>Gesamtrangliste (Alle Kurse)</option>
-                {{#each allCourses}}
-                <option value="{{this}}" {{#if (eq ../currentFilter this)}}selected{{/if}}>Kurs: {{this}}</option>
-                {{/each}}
-            </select>
-        </div>
-    </header>
-
-    <hr>
+    {{!-- Der neue Header mit passender Schriftart durch <h2> --}}
+    <h2><i class="fas fa-university"></i> Strixhaven Excellence</h2>
+    
+    {{!-- Die Filter-Row für das hübschere Dropdown --}}
+    <div class="filter-row">
+        <span>Ansicht:</span>
+        <select class="course-filter">
+            <option value="all" {{#if isGlobal}}selected{{/if}}>Gesamtrangliste (Alle Kurse)</option>
+            {{#each allCourses}}
+            <option value="{{this}}" {{#if (eq ../currentFilter this)}}selected{{/if}}>Kurs: {{this}}</option>
+            {{/each}}
+        </select>
+    </div>
 
     <div class="ranking-list">
         {{#each students}}
         <div class="student-row {{#if this.isGM}}is-gm{{/if}}">
-            <div class="rank">#{{add @index 1}}</div>
+            {{!-- Platzierung mit Trophäen-Icon --}}
+            <div class="rank">
+                {{add @index 1}}
+                <i class="fas fa-trophy ranking-icon"></i>
+            </div>
+
             <img src="{{this.img}}" class="student-img" title="{{this.name}}">
+            
             <div class="student-info">
                 <span class="name">{{this.name}}</span>
                 <span class="score">
