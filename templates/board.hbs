@@ -1,46 +1,45 @@
 <div class="strixhaven-board-container">
-    {{!-- Der neue Header mit passender Schriftart durch <h2> --}}
-    <h2><i class="fas fa-university"></i> Strixhaven Excellence</h2>
+    <h2><i class="fas fa-university"></i> {{boardTitle}}</h2>
     
-    {{!-- Die Filter-Row für das hübschere Dropdown --}}
-    <div class="filter-row">
-        <span>Ansicht:</span>
-        <select class="course-filter">
-            <option value="all" {{#if isGlobal}}selected{{/if}}>Gesamtrangliste (Alle Kurse)</option>
-            {{#each allCourses}}
-            <option value="{{this}}" {{#if (eq ../currentFilter this)}}selected{{/if}}>Kurs: {{this}}</option>
-            {{/each}}
-        </select>
-    </div>
-
-    <div class="downtime-tracker">
-    <div class="downtime-info">
-        <span class="downtime-label">Downtime Progress:</span>
-        <span class="downtime-count">{{downtimeCurrent}} / {{downtimeMax}} Cycles</span>
-        {{#if isGM}}
-        <div class="downtime-admin">
-            <a class="downtime-control" data-action="sub" title="Minus 1"><i class="fas fa-minus"></i></a>
-            <a class="downtime-control" data-action="add" title="Plus 1"><i class="fas fa-plus"></i></a>
-            <a class="downtime-control" data-action="set-max" title="Set Max"><i class="fas fa-cog"></i></a>
-            <a class="downtime-control" data-action="reset" title="Reset"><i class="fas fa-sync"></i></a>
+    <div class="header-controls">
+        {{!-- Filter auf der linken Seite --}}
+        <div class="filter-row">
+            <span>Selected:</span>
+            <select class="course-filter">
+                <option value="all" {{#if isGlobal}}selected{{/if}}>All courses</option>
+                {{#each allCourses}}
+                <option value="{{this}}" {{#if (eq ../currentFilter this)}}selected{{/if}}>{{this}}</option>
+                {{/each}}
+            </select>
         </div>
-        {{/if}}
-    </div>
-    <div class="downtime-bar-container">
-        <div class="downtime-bar" style="width: {{downtimePercent}}%"></div>
-    </div>
+
+        {{!-- Downtime Tracker auf der rechten Seite --}}
+        <div class="downtime-tracker">
+            <div class="downtime-bar-container">
+                <div class="downtime-bar" style="width: {{downtimePercent}}%"></div>
+                <span class="downtime-text">{{downtimeCurrent}} / {{downtimeMax}} Cycles</span>
+            </div>
+            
+            {{#if isGM}}
+            <div class="downtime-admin">
+                <a class="downtime-control" data-action="sub" title="Minus 1"><i class="fas fa-minus"></i></a>
+                <a class="downtime-control" data-action="add" title="Plus 1"><i class="fas fa-plus"></i></a>
+                <a class="downtime-control" data-action="set-max" title="Maximum einstellen"><i class="fas fa-cog"></i></a>
+                <a class="downtime-control" data-action="reset" title="Reset"><i class="fas fa-sync"></i></a>
+            </div>
+            {{/if}}
+        </div>
     </div>
 
     <div class="ranking-list">
         {{#each students}}
-        <div class="student-row {{#if this.isGM}}is-gm{{/if}}">
-            {{!-- Platzierung mit Trophäen-Icon --}}
+        <div class="student-row">
             <div class="rank">
                 {{add @index 1}}
                 <i class="fas fa-trophy ranking-icon"></i>
             </div>
 
-            <img src="{{this.img}}" class="student-img" title="{{this.name}}">
+            <img src="{{this.img}}" class="student-img">
             
             <div class="student-info">
                 <span class="name">{{this.name}}</span>
@@ -50,21 +49,12 @@
                 </span>
             </div>
             
-            {{#if this.isGM}}
+            {{#if isGM}}
             <div class="admin-controls">
-                <a class="edit-student" data-actor-id="{{this.id}}" title="Noten bearbeiten">
-                    <i class="fas fa-edit"></i>
-                </a>
-                <a class="delete-student" data-actor-id="{{this.id}}" title="Vom Brett entfernen">
-                    <i class="fas fa-trash"></i>
-                </a>
+                <a class="edit-student" data-actor-id="{{this.id}}"><i class="fas fa-edit"></i></a>
+                <a class="delete-student" data-actor-id="{{this.id}}"><i class="fas fa-trash"></i></a>
             </div>
             {{/if}}
-        </div>
-        {{else}}
-        <div class="empty-msg">
-            <p>Keine Studierenden gefunden.</p>
-            <p><small>Ziehe einen Charakter aus der Sidebar hierher, um ihn einzuschreiben.</small></p>
         </div>
         {{/each}}
     </div>

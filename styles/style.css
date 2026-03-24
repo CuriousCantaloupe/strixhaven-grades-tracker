@@ -32,10 +32,10 @@
     overflow-y: auto;
 }
 
-/* --- NEU: Header & Filter Styling --- */
+/* --- Header & Title --- */
 .strixhaven-board-container h2 {
     font-family: 'Crimson Text', serif;
-    font-size: 2.5em;
+    font-size: 2.2em;
     border-bottom: 2px solid #8b4513;
     color: #4a0404;
     margin-bottom: 15px;
@@ -45,14 +45,24 @@
     gap: 12px;
 }
 
-.strixhaven-board-container .filter-row {
-    font-family: 'Crimson Text', serif;
-    font-size: 1.1em;
-    color: #4b4a44;
-    margin-bottom: 15px;
+/* --- NEU: Kompakt-Layout für Filter & Downtime --- */
+.header-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 0 5px;
+}
+
+.filter-row {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    white-space: nowrap;
+    font-family: 'Crimson Text', serif;
+    font-weight: bold;
+    color: #4b4a44;
 }
 
 .strixhaven-board-container select.course-filter {
@@ -72,7 +82,63 @@
     box-shadow: 0 0 5px rgba(139, 69, 19, 0.2);
 }
 
-/* Platzierungs-Bereich (Zahl & Icon) */
+/* Downtime Tracker (Inline Version) */
+.downtime-tracker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-grow: 1;
+    max-width: 350px;
+    background: rgba(139, 69, 19, 0.05);
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid rgba(139, 69, 19, 0.2);
+}
+
+.downtime-bar-container {
+    position: relative;
+    flex-grow: 1;
+    height: 18px;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid #8b4513;
+    border-radius: 9px;
+    overflow: hidden;
+}
+
+.downtime-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #8b4513, #4a0404);
+    transition: width 0.5s ease-in-out;
+}
+
+.downtime-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 0.85em;
+    font-weight: bold;
+    color: #4a0404;
+    line-height: 17px;
+    text-shadow: 1px 1px 1px rgba(255,255,255,0.6);
+    pointer-events: none;
+}
+
+.downtime-admin {
+    display: flex;
+    gap: 8px;
+}
+
+.downtime-control {
+    font-size: 0.9em;
+    color: #8b4513;
+    cursor: pointer;
+}
+
+.downtime-control:hover { color: #4a0404; }
+
+/* --- Rankings & Students --- */
 .strixhaven-board-container .rank {
     font-family: 'Crimson Text', serif;
     font-size: 1.8em; 
@@ -93,29 +159,18 @@
     vertical-align: middle;
 }
 
-/* Top 3: Icons anzeigen und Farben zuweisen */
+/* Top 3 Styling */
 .ranking-list .student-row:nth-child(1) .rank,
-.ranking-list .student-row:nth-child(1) .ranking-icon {
-    color: #d4af37; /* Gold */
-}
-
+.ranking-list .student-row:nth-child(1) .ranking-icon { color: #d4af37; }
 .ranking-list .student-row:nth-child(2) .rank,
-.ranking-list .student-row:nth-child(2) .ranking-icon {
-    color: #aaa9ad; /* Silber */
-}
-
+.ranking-list .student-row:nth-child(2) .ranking-icon { color: #aaa9ad; }
 .ranking-list .student-row:nth-child(3) .rank,
-.ranking-list .student-row:nth-child(3) .ranking-icon {
-    color: #b08d57; /* Bronze */
-}
+.ranking-list .student-row:nth-child(3) .ranking-icon { color: #b08d57; }
 
 .ranking-list .student-row:nth-child(1) .ranking-icon,
 .ranking-list .student-row:nth-child(2) .ranking-icon,
-.ranking-list .student-row:nth-child(3) .ranking-icon {
-    display: inline-block;
-}
+.ranking-list .student-row:nth-child(3) .ranking-icon { display: inline-block; }
 
-/* Spezial-Effekte für Platz 1 */
 .ranking-list .student-row:nth-child(1) .rank {
     font-size: 2.2em;
     filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.5));
@@ -137,9 +192,7 @@
     margin-bottom: 5px;
 }
 
-.student-row:hover {
-    background: rgba(255, 255, 255, 0.5);
-}
+.student-row:hover { background: rgba(255, 255, 255, 0.5); }
 
 .student-row img.student-img {
     width: 50px !important;
@@ -153,13 +206,15 @@
 
 .student-info {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Erzwingt die Zeile unter dem Namen */
+    justify-content: center;
 }
 
 .student-info .name {
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 1.25em;
     color: #4a0404;
+    line-height: 1.2;
 }
 
 .student-info .score {
@@ -176,55 +231,10 @@
     transition: opacity 0.2s ease;
 }
 
-.student-row:hover .admin-controls {
-    opacity: 1;
-}
-
-.admin-controls a {
-    cursor: pointer;
-    font-size: 1.1em;
-    color: #4a0404;
-}
-
+.student-row:hover .admin-controls { opacity: 1; }
+.admin-controls a { cursor: pointer; font-size: 1.1em; color: #4a0404; }
 .admin-controls .edit-student:hover { color: #2a5a2a; }
 .admin-controls .delete-student:hover { color: #a01a1a; }
-
-/* Downtime Tracker */
-.downtime-tracker {
-    background: rgba(139, 69, 19, 0.1);
-    border: 1px solid #8b4513;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 15px;
-}
-
-.downtime-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
-    font-family: 'Crimson Text', serif;
-}
-
-.downtime-label { font-weight: bold; color: #4a0404; }
-
-.downtime-admin { display: flex; gap: 10px; }
-.downtime-control { cursor: pointer; color: #8b4513; }
-.downtime-control:hover { color: #4a0404; }
-
-.downtime-bar-container {
-    height: 12px;
-    background: rgba(255, 255, 255, 0.5);
-    border: 1px solid #8b4513;
-    border-radius: 6px;
-    overflow: hidden;
-}
-
-.downtime-bar {
-    height: 100%;
-    background: linear-gradient(90deg, #8b4513, #4a0404);
-    transition: width 0.5s ease-in-out;
-}
 
 /* Editor Formular */
 .course-grid {

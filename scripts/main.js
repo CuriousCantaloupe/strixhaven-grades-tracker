@@ -93,6 +93,7 @@ class StrixhavenGradesTracker extends Application {
         const studentData = game.settings.get("strixhaven-grades-tracker", "studentData") || {};
         const courseString = game.settings.get("strixhaven-grades-tracker", "courseList") || "";
         const allCourses = courseString.split(",").map(c => c.trim()).filter(c => c !== "");
+        const boardTitle = game.settings.get("strixhaven-grades-tracker", "boardTitle");
         
         // Downtime Daten
         const downtimeMax = game.settings.get("strixhaven-grades-tracker", "downtimeMax") || 4;
@@ -120,6 +121,7 @@ class StrixhavenGradesTracker extends Application {
             currentFilter: this.currentFilter,
             isGlobal: this.currentFilter === "all",
             isGM: game.user.isGM,
+            boardTitle: boardTitle,
             downtimeMax,
             downtimeCurrent,
             downtimePercent: Math.min((downtimeCurrent / downtimeMax) * 100, 100)
@@ -214,18 +216,29 @@ const strixTool = {
 
 Hooks.once("init", () => {
     game.settings.register("strixhaven-grades-tracker", "courseList", {
+        name: "Available courses",
         scope: "world", config: true, type: String, 
-        default: "GF1, GF2, ALC1, ALC2, MAG1, MAG2, HIS1, DRA1, MAT1, RUN1, BOT1, ILL1, SUM1, NEC1"
+        hint: "List of courses/subjects, separated by commas.",
+        default: "AF1, AF2, GF1, GF2, LF1, LF2, PF1, PF2, QF1, QF2, SF1, SF2, WF1, WF2"
     });
     game.settings.register("strixhaven-grades-tracker", "studentData", {
         scope: "world", config: false, type: Object, default: {}
     });
     game.settings.register("strixhaven-grades-tracker", "downtimeMax", {
-        scope: "world", config: true, type: Number, default: 4
+        scope: "world", config: false, type: Number, default: 4
     });
     game.settings.register("strixhaven-grades-tracker", "downtimeCurrent", {
         scope: "world", config: false, type: Number, default: 0
     });
+    game.settings.register("strixhaven-grades-tracker", "boardTitle", {
+    name: "Board Title",
+    hint: "The name that is shown at the top of the bulletin board.",
+    scope: "world",
+    config: true,
+    type: String,
+    default: "Strixhaven Excellence",
+    onChange: () => strixTool.application.render() // Aktualisiert das Board sofort bei Änderung
+});
 
     Handlebars.registerHelper('add', (a, b) => a + b);
     Handlebars.registerHelper('eq', (a, b) => a === b);

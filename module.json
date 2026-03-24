@@ -2,10 +2,10 @@
   "id": "strixhaven-grades-tracker",
   "title": "Ranked Grade Tracker",
   "description": "A dynamic ranked list for students, with course filters and grade editor.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "library": "false",
   "manifest": "https://raw.githubusercontent.com/CuriousCantaloupe/strixhaven-grades-tracker/refs/heads/main/module.json",
-  "download": "https://github.com/CuriousCantaloupe/strixhaven-grades-tracker/releases/download/1.0.0/strixhaven-grades-tracker.zip",
+  "download": "https://github.com/CuriousCantaloupe/strixhaven-grades-tracker/releases/download/1.1.0/strixhaven-grades-tracker.zip",
   "authors": [
     {
       "name": "CuriousCantaloupe",
